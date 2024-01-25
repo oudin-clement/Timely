@@ -24,6 +24,7 @@ export default {
         }})
           .then(res => {
             this.fetchProfile({key : this.key, id :res.data.id, name : res.data.name, email : res.data.email})
+            this.$router.push("/")
           })
           .catch(e => {
             this.displayErreur = true
