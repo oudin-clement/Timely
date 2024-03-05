@@ -16,7 +16,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(useActiviteStore, ["lancerActivite"]),
+    ...mapActions(useActiviteStore, ["lancerActivite", "finirActivite"]),
     startActivite(){
       console.log("start")
       for (let i = 0; i < this.projets.length; i++) {
@@ -41,11 +41,27 @@ export default {
       console.log(this.activiteSelectedName)
 
       this.lancerActivite({idProjet: this.projetSelectedId, idActivite: this.activiteSelectedId, nomProjet: this.projetSelectedName, nomActivite: this.activiteSelectedName, debut: new Date().toISOString()})
-    }
+    },
+    stopActivite(){
+      axios.post("https://timely.edu.netlor.fr/api/time-entries", {
+        "project_id": this.idProjet,
+        "activity_id": this.idActivite,
+        "start": this.debut,
+        "end": new Date().toISOString()
+      }, {
+        headers: {
+          'Content-Type': "application/json",
+          "Authorization": `key=${this.key}`
+        }
+      })
+      this.finirActivite({fin: new Date().toISOString()})
+      console.log("stop")
+    },
 
   },
   computed: {
-    ...mapState(useAuthentificationStore, ["key"]),
+    ...mapState(useActiviteStore, ["nomActivite", "idActivite", "idProjet", "debut"]),
+    ...mapState(useAuthentificationStore, ["key"])
   },
   created() {
     if (this.key) {
@@ -76,7 +92,7 @@ export default {
 
 <template>
   <main class="px-[50px] py-[35px]">
-    <div class="flex items-center justify-evenly px-8 py-5 bg-purple-950 rounded-2xl">
+    <div v-if="!nomActivite" class="flex items-center justify-evenly px-8 py-5 bg-purple-950 rounded-2xl">
       <div class="w-[252px]">
         <v-select
             :items="projets"
@@ -97,6 +113,10 @@ export default {
       </div>
 
       <v-btn color="blue" @click="startActivite" variant="outlined">Commencer</v-btn>
+    </div>
+    <div v-else class="flex items-center justify-between px-8 py-5 bg-green-950 rounded-2xl">
+      <h1>Activité en cours : {{nomActivite}}</h1>
+      <v-btn color="red" @click="stopActivite" variant="outlined">Arreter activité</v-btn>
     </div>
 
   </main>
