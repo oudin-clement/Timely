@@ -1,4 +1,5 @@
 import {defineStore} from 'pinia'
+import axios from "axios";
 
 export const useActiviteStore = defineStore('activite', {
     state() {
@@ -17,6 +18,16 @@ export const useActiviteStore = defineStore('activite', {
             this.idProjet = idProjet
             this.nomProjet = nomProjet
             this.debut = debut
+
+        },
+
+        finirActivite() {
+
+            this.idActivite = ""
+            this.nomActivite = ""
+            this.idProjet = ""
+            this.nomProjet = ""
+            this.debut = ""
 
         }
     },
