@@ -1,6 +1,8 @@
 <script>
 import {useActiviteStore} from "@/stores/activite.js";
-import {mapState} from "pinia";
+import {mapActions, mapState} from "pinia";
+import axios from "axios";
+import {useAuthentificationStore} from "@/stores/authentification.js";
 
 export default {
   data(){
@@ -9,8 +11,36 @@ export default {
     }
   },
   computed: {
-    ...mapState(useActiviteStore, ["nomActivite"])
+    ...mapState(useActiviteStore, ["nomActivite", "idActivite", "debut", "idProjet"]),
+    ...mapState(useAuthentificationStore, ["key"])
   },
+  methods: {
+    ...mapActions(useActiviteStore, ["finirActivite"]),
+    stopActivite() {
+      axios.post("https://timely.edu.netlor.fr/api/time-entries", {
+        "project_id": this.idProjet,
+        "activity_id": this.idActivite,
+        "start": this.debut,
+        "end": new Date().toISOString()
+      }, {
+        headers: {
+          'Content-Type': "application/json",
+          "Authorization": `key=${this.key}`
+        }
+      })
+      this.finirActivite({fin: new Date().toISOString()})
+      console.log("stop")
+      axios.get("https://timely.edu.netlor.fr/api/time-entries", {
+        headers: {
+          'Content-Type': "application/json",
+          'Authorization': `key=` + this.key,
+        }
+      })
+          .then(res => {
+            this.timeEntries = res.data
+          })
+    },
+  }
 }
 </script>
 
@@ -26,7 +56,7 @@ export default {
       <p>Activité en cours : {{this.nomActivite}}</p>
     </div>
     <div>
-      <p>STOP</p>
+      <p @click="stopActivite" class="cursor-pointer">STOP</p>
     </div>
     <div>
       <p>Nombre d'heures quotidiennes :</p>
