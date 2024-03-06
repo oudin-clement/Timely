@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import {useAuthentificationStore} from "@/stores/authentification.js";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -39,6 +40,19 @@ const router = createRouter({
       component: () => import('../views/Activites.vue')
     }
   ]
+})
+
+router.beforeEach((to, from, next) => {
+  if (to.name !== 'connexion' && to.name !== 'inscription') {
+    const store = useAuthentificationStore()
+    if (!store.key) {
+      next({name: 'connexion'})
+    } else {
+      next()
+    }
+  } else {
+    next()
+  }
 })
 
 export default router

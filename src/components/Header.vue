@@ -1,16 +1,76 @@
 <script>
 import {useActiviteStore} from "@/stores/activite.js";
-import {mapState} from "pinia";
+import {mapActions, mapState} from "pinia";
+import axios from "axios";
+import {useAuthentificationStore} from "@/stores/authentification.js";
 
 export default {
-  data(){
+  data() {
     return {
-
+      timeEntries: []
     }
   },
   computed: {
-    ...mapState(useActiviteStore, ["nomActivite"])
+    ...mapState(useActiviteStore, ["nomActivite", "idActivite", "debut", "idProjet"]),
+    ...mapState(useAuthentificationStore, ["key"]),
+    tempsQuotidien (){
+      let temps = 0
+      for (let i = 0; i < this.timeEntries.length; i++) {
+        if (this.timeEntries[i].end) {
+          temps += new Date(this.timeEntries[i].end) - new Date(this.timeEntries[i].start)
+        }
+      }
+      const minute = temps/60/1000
+      const heure = minute/60
+      return heure.toFixed(2)
+    }
   },
+  methods: {
+    ...mapActions(useActiviteStore, ["finirActivite"]),
+    ...mapActions(useAuthentificationStore, ["clearProfile"]),
+    deconnexion() {
+      this.clearProfile()
+      this.$router.push("/connexion")
+    },
+    stopActivite() {
+      axios.post("https://timely.edu.netlor.fr/api/time-entries", {
+        "project_id": this.idProjet,
+        "activity_id": this.idActivite,
+        "start": this.debut,
+        "end": new Date().toISOString()
+      }, {
+        headers: {
+          'Content-Type': "application/json",
+          "Authorization": `key=${this.key}`
+        }
+      })
+      this.finirActivite({fin: new Date().toISOString()})
+      console.log("stop")
+      axios.get("https://timely.edu.netlor.fr/api/time-entries", {
+        headers: {
+          'Content-Type': "application/json",
+          'Authorization': `key=` + this.key,
+        }
+      })
+          .then(res => {
+            this.timeEntries = res.data
+          })
+    },
+  },
+  created() {
+    if (this.key) {
+      const date = new Date().toISOString().split("T")[0]
+      axios.get(`https://timely.edu.netlor.fr/api/time-entries?from=${date}&to=${date}`, {
+        headers: {
+          'Content-Type': "application/json",
+          'Authorization': `key=` + this.key,
+        }
+      })
+    .then(res => {
+            this.timeEntries = res.data
+          })
+    }
+  }
 }
 </script>
 
@@ -20,16 +80,16 @@ export default {
       <p>Paramètre Généraux</p>
     </div>
     <div>
-      <p>Déconnexion</p>
+      <p class="cursor-pointer" @click="deconnexion">Déconnexion</p>
     </div>
     <div>
-      <p>Activité en cours : {{this.nomActivite}}</p>
+      <p>Activité en cours : {{this.nomActivite || "🚫"}}</p>
     </div>
     <div>
-      <p>STOP</p>
+      <p @click="stopActivite" :class="{'cursor-not-allowed' : !this.nomActivite}" class="cursor-pointer">STOP</p>
     </div>
     <div>
-      <p>Nombre d'heures quotidiennes :</p>
+      <p>Nombre d'heures quotidiennes : {{tempsQuotidien}}h</p>
     </div>
     <div>
       <p>Objectif atteint :</p>
