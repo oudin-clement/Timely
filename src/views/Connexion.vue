@@ -46,6 +46,7 @@ export default {
       <h1 class="font-bold text-center text-[59px] mb-12">Connexion</h1>
       <v-text-field v-model="key" label="clé" class="w-[15vw]"/>
       <v-btn @click="connexion" color="blue" variant="outlined">Connexion</v-btn>
+      <div class="text-sm mt-6"><p>Pas encore de compte ? <RouterLink class="text-blue-600" to="inscription">Inscivez vous</RouterLink></p></div>
 
       <v-alert class="mt-10" v-model="displayErreur" transition="fade-transition" border="start" variant="tonal"
                closable color="red-accent-4" title="erreur">

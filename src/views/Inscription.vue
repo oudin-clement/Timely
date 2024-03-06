@@ -37,6 +37,8 @@ export default {
       <div class="flex justify-center">
         <v-btn @click="inscription" color="blue" variant="outlined">Inscription</v-btn>
       </div>
+      <div class="text-sm mt-6"><p>Vous avez déjà un compte ? <RouterLink class="text-blue-600" to="connexion">Connectez vous</RouterLink></p></div>
+
       <v-alert class="mt-10" v-model="displayErreur" transition="fade-transition" border="start" variant="tonal"
                closable color="red-accent-4" title="erreur">
         <div :key="e" v-for="e in erreur">{{ e }}</div>
