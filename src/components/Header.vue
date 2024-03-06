@@ -5,17 +5,33 @@ import axios from "axios";
 import {useAuthentificationStore} from "@/stores/authentification.js";
 
 export default {
-  data(){
+  data() {
     return {
-
+      timeEntries: []
     }
   },
   computed: {
     ...mapState(useActiviteStore, ["nomActivite", "idActivite", "debut", "idProjet"]),
-    ...mapState(useAuthentificationStore, ["key"])
+    ...mapState(useAuthentificationStore, ["key"]),
+    tempsQuotidien (){
+      let temps = 0
+      for (let i = 0; i < this.timeEntries.length; i++) {
+        if (this.timeEntries[i].end) {
+          temps += new Date(this.timeEntries[i].end) - new Date(this.timeEntries[i].start)
+        }
+      }
+      const minute = temps/60/1000
+      const heure = minute/60
+      return heure.toFixed(2)
+    }
   },
   methods: {
     ...mapActions(useActiviteStore, ["finirActivite"]),
+    ...mapActions(useAuthentificationStore, ["clearProfile"]),
+    deconnexion() {
+      this.clearProfile()
+      this.$router.push("/connexion")
+    },
     stopActivite() {
       axios.post("https://timely.edu.netlor.fr/api/time-entries", {
         "project_id": this.idProjet,
@@ -40,6 +56,20 @@ export default {
             this.timeEntries = res.data
           })
     },
+  },
+  created() {
+    if (this.key) {
+      const date = new Date().toISOString().split("T")[0]
+      axios.get(`https://timely.edu.netlor.fr/api/time-entries?from=${date}&to=${date}`, {
+        headers: {
+          'Content-Type': "application/json",
+          'Authorization': `key=` + this.key,
+        }
+      })
+    .then(res => {
+            this.timeEntries = res.data
+          })
+    }
   }
 }
 </script>
@@ -50,16 +80,16 @@ export default {
       <p>Paramètre Généraux</p>
     </div>
     <div>
-      <p>Déconnexion</p>
+      <p class="cursor-pointer" @click="deconnexion">Déconnexion</p>
     </div>
     <div>
-      <p>Activité en cours : {{this.nomActivite}}</p>
+      <p>Activité en cours : {{this.nomActivite || "🚫"}}</p>
     </div>
     <div>
-      <p @click="stopActivite" class="cursor-pointer">STOP</p>
+      <p @click="stopActivite" :class="{'cursor-not-allowed' : !this.nomActivite}" class="cursor-pointer">STOP</p>
     </div>
     <div>
-      <p>Nombre d'heures quotidiennes :</p>
+      <p>Nombre d'heures quotidiennes : {{tempsQuotidien}}</p>
     </div>
     <div>
       <p>Objectif atteint :</p>

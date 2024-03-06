@@ -23,7 +23,12 @@ export const useAuthentificationStore = defineStore('authentification', {
             this.id = id
             this.name = name
             this.email = email
-
+        },
+        clearProfile() {
+            this.key = ""
+            this.id = ""
+            this.name = ""
+            this.email = ""
         }
     },
     persist: {
