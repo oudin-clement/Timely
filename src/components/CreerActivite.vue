@@ -1,4 +1,8 @@
 <script>
+import axios from "axios";
+import {mapState} from "pinia";
+import {useAuthentificationStore} from "@/stores/authentification.js";
+
 export default {
   data: () => ({
     nom: '',
@@ -11,9 +15,21 @@ export default {
       },
     ],
   }),
+  computed: {
+    ...mapState(useAuthentificationStore, ["name", "id", "key", "email"])
+  },
   methods:{
     createActivity() {
       if(this.nom !== ''){
+        axios.post("https://timely.edu.netlor.fr/api/activities", {
+          "name": this.nom,
+          "color": this.color
+        }, {
+          headers: {
+            'Content-Type': "application/json",
+            "Authorization": `key=${this.key}`
+          }
+        })
         this.reset()
       }
     },
@@ -25,7 +41,7 @@ export default {
 </script>
 
 <template>
-  <div>
+  <div class="container">
     <h2>Creer Activité</h2>
 
     <v-form @submit.prevent ref="form">
@@ -44,5 +60,20 @@ export default {
 </template>
 
 <style scoped>
+
+h2{
+  font-size: 25px;
+  margin-bottom: 20px;
+}
+
+.container{
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+}
 
 </style>

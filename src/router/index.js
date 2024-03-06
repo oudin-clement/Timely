@@ -35,9 +35,19 @@ const router = createRouter({
       component: () => import('../views/Connexion.vue')
     },
     {
-      path: '/paramettres',
-      name: 'paramettres',
-      component: () => import('../views/Activites.vue')
+      path: '/activite/creer',
+      name: 'creer-activite',
+      component: () => import('../components/CreerActivite.vue')
+    },
+    {
+      path: '/activite',
+        name: 'activite',
+        component: () => import('../views/Activites.vue')
+    },
+    {
+        path: '/profil',
+        name: 'profil',
+        component: () => import('../views/Profil.vue')
     }
   ]
 })
