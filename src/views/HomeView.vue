@@ -14,7 +14,8 @@ export default {
       projetSelectedName: "",
       activiteSelectedId: "",
       activiteSelectedName: "",
-      tempsEcoul: 0
+      tempsEcoul: 0,
+      textNote: ""
     }
   },
   methods: {
@@ -69,7 +70,8 @@ export default {
         "project_id": this.idProjet,
         "activity_id": this.idActivite,
         "start": this.debut,
-        "end": new Date().toISOString()
+        "end": new Date().toISOString(),
+        "comment" : this.textNote
       }, {
         headers: {
           'Content-Type': "application/json",
@@ -139,8 +141,9 @@ export default {
 </script>
 
 <template>
-  <main class="px-[254px] py-[35px]">
-    <div v-if="!nomActivite" class="flex items-center justify-evenly px-8 py-5 bg-purple-950 rounded-2xl h-[250px] mb-10">
+  <main class="px-[228px] py-[35px]">
+    <div v-if="!nomActivite"
+         class="flex items-center justify-evenly px-8 py-5 bg-purple-950 rounded-2xl h-[250px] mb-10">
       <div class="w-[252px]">
         <v-select
             :items="projets"
@@ -162,11 +165,16 @@ export default {
 
       <v-btn color="blue" @click="startActivite" variant="outlined">Commencer</v-btn>
     </div>
-    <div v-else class="flex items-center justify-between px-32 py-5 bg-purple-950 h-[250px] rounded-2xl mb-10">
-      <h1 class="font-bold text-4xl">Activité en cours : {{ nomActivite }}</h1>
-      <h1 class="font-bold text-4xl">{{formatTemps(tempsEcoul)}}</h1>
-      <v-btn color="red-darken-4" @click="stopActivite" variant="elevated">Arreter activité</v-btn>
+    <div v-else class="px-32 py-5 bg-purple-950 min-h-[250px] rounded-2xl mb-10">
+      <div class="flex items-center justify-between">
+        <h1 class="font-bold text-4xl">Activité en cours : {{ nomActivite }}</h1>
+        <h1 class="font-bold text-4xl">{{ formatTemps(tempsEcoul) }}</h1>
+        <v-btn color="red-darken-4" @click="stopActivite" variant="elevated">Arreter activité</v-btn>
+      </div>
+      <h1 class="mt-8 text-xl">Notes :</h1>
+      <v-textarea v-model="textNote"></v-textarea>
     </div>
+
 
     <div>
       <div v-for="timeEntry in timeEntries" :key="timeEntry.id"

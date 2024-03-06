@@ -89,7 +89,7 @@ export default {
       <p @click="stopActivite" :class="{'cursor-not-allowed' : !this.nomActivite}" class="cursor-pointer">STOP</p>
     </div>
     <div>
-      <p>Nombre d'heures quotidiennes : {{tempsQuotidien}}</p>
+      <p>Nombre d'heures quotidiennes : {{tempsQuotidien}}h</p>
     </div>
     <div>
       <p>Objectif atteint :</p>
