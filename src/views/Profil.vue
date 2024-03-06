@@ -5,6 +5,8 @@ import axios from "axios";
 
 export default {
   data: () => ({
+    name: '',
+    email: '',
     rules: [
       value => {
         if (value) return true
@@ -14,24 +16,35 @@ export default {
     ],
   }),
   computed: {
-    ...mapState(useAuthentificationStore, ["name", "id", "key", "email"])
+    ...mapState(useAuthentificationStore, ["key"])
   },
-  methods:{
-    modifProfil() {
-      if(this.name !== '' && this.email !== ''){
-        axios.put("https://timely.edu.netlor.fr/api/profile", {
-          "name": this.name,
-          "email": this.email
-        }, {
-          headers: {
-            'Content-Type': "application/json",
-            "Authorization": `key=${this.key}`
+  mounted() {
+    axios.get("https://timely.edu.netlor.fr/api/profile", {
+      headers: {
+        'Content-Type': "application/json",
+        "Authorization": `key=${this.key}`
+      }
+    }).then(res => {
+      this.name = res.data.name;
+      this.email = res.data.email;
+    })
+    },
+      methods: {
+        modifProfil() {
+          if (this.name !== '' && this.email !== '') {
+            axios.put("https://timely.edu.netlor.fr/api/profile", {
+              "name": this.name,
+              "email": this.email
+            }, {
+              headers: {
+                'Content-Type': "application/json",
+                "Authorization": `key=${this.key}`
+              }
+            })
           }
-        })
+        }
       }
     }
-  }
-}
 </script>
 
 <template>
@@ -54,17 +67,19 @@ export default {
 </template>
 
 <style scoped>
-h1{
+h1 {
   font-size: 30px;
   margin-bottom: 20px;
 }
+
 form {
   display: flex;
   flex-direction: column;
   margin-top: 20px;
   width: 25%;
 }
-.container{
+
+.container {
   margin-top: 30px;
   display: flex;
   align-items: center;
