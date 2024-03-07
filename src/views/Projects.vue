@@ -59,17 +59,17 @@ export default {
 
 <template>
   <div>
-    <h1>Projects</h1>
+    <h1>Projets</h1>
     <v-container>
       <v-row>
         <v-col v-for="item in tab" :key="item.id" cols="12" md="4">
           <v-card>
             <v-card-title>{{item.name}}</v-card-title>
             <v-card-text>{{item.description}}</v-card-text>
-            <v-card-text>
+            <v-card-actions>
               <v-btn @click="modifyProject(item.id)">Modifier</v-btn>
               <v-btn @click="enableDisableProject(item.id,item.is_enabled)">{{item.is_enabled === 0 ? "Activer" : "Desactiver"}}</v-btn>
-            </v-card-text>
+            </v-card-actions>
           </v-card>
         </v-col>
       </v-row>

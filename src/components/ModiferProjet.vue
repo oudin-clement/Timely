@@ -34,7 +34,7 @@ export default {
             "Authorization": `key=${this.key}`
           }
         })
-        this.$router.push({name: "projet"})
+        this.$router.push({name: "parametre-generaux"})
       }
     },
     getProjects() {
@@ -45,7 +45,7 @@ export default {
         }
       }).then(res => {
         this.nom = res.data.name
-        this.color = res.data.description
+        this.description = res.data.description
       })
     }
   }

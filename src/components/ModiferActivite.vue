@@ -34,7 +34,7 @@ export default {
             "Authorization": `key=${this.key}`
           }
         })
-        this.$router.push({name: "activite"})
+        this.$router.push({name: "parametre-generaux"})
       }
     },
     getActivity() {

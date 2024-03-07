@@ -63,6 +63,11 @@ const router = createRouter({
       path: '/projet',
       name: 'projet',
       component: () => import('../views/Projects.vue')
+    },
+    {
+      path: '/parametre/generaux',
+      name: 'parametre-generaux',
+      component: () => import('../views/PrametresGeneraux.vue')
     }
   ]
 })
