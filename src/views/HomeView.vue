@@ -79,8 +79,9 @@ export default {
         }
       })
       this.finirActivite({fin: new Date().toISOString()})
+      const date = new Date().toISOString().split("T")[0]
       console.log("stop")
-      axios.get("https://timely.edu.netlor.fr/api/time-entries", {
+      axios.get(`https://timely.edu.netlor.fr/api/time-entries?from=${date}&to=${date}`, {
         headers: {
           'Content-Type': "application/json",
           'Authorization': `key=` + this.key,
@@ -127,7 +128,8 @@ export default {
           })
     }
 
-    axios.get("https://timely.edu.netlor.fr/api/time-entries", {
+    const date = new Date().toISOString().split("T")[0]
+    axios.get(`https://timely.edu.netlor.fr/api/time-entries?from=${date}&to=${date}`, {
       headers: {
         'Content-Type': "application/json",
         'Authorization': `key=` + this.key,
