@@ -48,6 +48,11 @@ const router = createRouter({
         path: '/profil',
         name: 'profil',
         component: () => import('../views/Profil.vue')
+    },
+    {
+        path: '/modif/activite/:id',
+        name: 'modifierActivite',
+        component: () => import('../components/ModiferActivite.vue')
     }
   ]
 })
