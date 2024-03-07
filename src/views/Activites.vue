@@ -37,7 +37,7 @@ export default {
           'Content-Type': "application/json",
           "Authorization": `key=${this.key}`
         }
-      }).then(res => {
+      }).then(() => {
         this.getActivities()
       })
       }else{
@@ -46,7 +46,7 @@ export default {
             'Content-Type': "application/json",
             "Authorization": `key=${this.key}`
           }
-        }).then(res => {
+        }).then(() => {
           this.getActivities()
         })
       }

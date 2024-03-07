@@ -53,6 +53,16 @@ const router = createRouter({
         path: '/modif/activite/:id',
         name: 'modifierActivite',
         component: () => import('../components/ModiferActivite.vue')
+    },
+    {
+      path: '/modif/projet/:id',
+      name: 'modifierProjet',
+      component: () => import('../components/ModiferProjet.vue')
+    },
+    {
+      path: '/projet',
+      name: 'projet',
+      component: () => import('../views/Projects.vue')
     }
   ]
 })
