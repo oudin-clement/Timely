@@ -6,6 +6,7 @@ import {useAuthentificationStore} from "@/stores/authentification.js";
 export default {
   data() {
     return {
+      resFetch : null,
       projetSelectedId: "",
       activiteSelectedId: "",
       textNote: "",
@@ -13,7 +14,23 @@ export default {
       fin: ""
     }
   },
-  props: ['projets', "activites",],
+  props: ['projets', "activites", "entryId"],
+  created() {
+    axios.get(`https://timely.edu.netlor.fr/api/time-entries/${this.entryId}`, {
+      headers: {
+        'Content-Type': "application/json",
+        'Authorization': `key=` + this.key,
+      }
+    })
+        .then(res => {
+          this.resFetch = res.data
+          this.projetSelectedId = res.data.project_id
+          this.activiteSelectedId = res.data.activity_id
+          this.textNote = res.data.comment
+          this.debut = res.data.start
+          this.fin = res.data.end
+        })
+  },
   computed: {
     ...mapState(useAuthentificationStore, ["key"])
   },
@@ -37,8 +54,18 @@ export default {
       this.$emit("close");
     },
 
-    createTimeEntry(){
-      axios.post("https://timely.edu.netlor.fr/api/time-entries", {
+    deleteTimeEntry(){
+      axios.delete(`https://timely.edu.netlor.fr/api/time-entries/${this.entryId}`, {
+        headers: {
+          'Content-Type': "application/json",
+          "Authorization": `key=${this.key}`
+        }
+      })
+      this.$emit("close");
+    },
+
+    editTimeEntry(){
+      axios.put(`https://timely.edu.netlor.fr/api/time-entries/${this.entryId}`, {
         "project_id": this.projetSelectedId,
         "activity_id": this.activiteSelectedId,
         "start": this.formatDateTime(this.debut),
@@ -67,7 +94,6 @@ export default {
         item-title="name"
         item-value="id"
         label="Projet"
-        class="w-[250px]"
     ></v-select>
 
     <v-select
@@ -76,17 +102,21 @@ export default {
         v-model="activiteSelectedId"
         item-title="name"
         item-value="id"
-        label="Activité"
-        class="w-[250px]">
-
-    </v-select>
+        label="Activité"></v-select>
     <v-textarea v-model="textNote"></v-textarea>
     <input type="datetime-local" v-model="debut">
     <input type="datetime-local" v-model="fin">
-    <div class="flex justify-between w-full mt-10 px-[150px]">
-      <v-btn color="blue" @click="createTimeEntry">Créer</v-btn>
-      <v-btn @click="closeDialog">Annuler</v-btn>
-    </div>
+    <div class="w-full mt-10">
+      <div class="flex justify-evenly">
+        <v-btn color="yellow" @click="editTimeEntry">Editer</v-btn>
+        <v-btn @click="closeDialog">Annuler</v-btn>
+        </div>
+        <div class="flex justify-end mt-12">
+          <v-btn color="red" @click="deleteTimeEntry">Supprimer</v-btn>
+        </div>
+
+      </div>
+
 
 
   </div>

@@ -5,9 +5,10 @@ import {useAuthentificationStore} from "@/stores/authentification.js";
 import {useActiviteStore} from "@/stores/activite.js";
 import CreerActivite from "@/components/CreerActivite.vue";
 import CreerTimeEntries from "@/components/CreerTimeEntries.vue";
+import ModifierTimeEntries from "@/components/ModifierTimeEntries.vue";
 
 export default {
-  components: {CreerActivite, CreerTimeEntries},
+  components: {CreerActivite, CreerTimeEntries, ModifierTimeEntries},
   data() {
     return {
       projets: [],
@@ -21,7 +22,9 @@ export default {
       fincreate: "",
       tempsEcoul: 0,
       textNote: "",
-      dialog_create: false
+      dialog_create: false,
+      dialog_edit: false,
+      idAvantEdit: ""
     }
   },
   methods: {
@@ -107,6 +110,15 @@ export default {
 
     closeTimeEntriesCreate(){
       this.dialog_create = false
+    },
+
+    closeTimeEntriesEdit(){
+      this.dialog_edit = false
+    },
+
+    openTimeEntriesEdit(id){
+      this.idAvantEdit = id;
+      this.dialog_edit = true
     }
 
   },
@@ -199,6 +211,10 @@ export default {
         <p class="text-xl font-bold">{{ getNameActivite(timeEntry.activity_id) }}</p>
         <p>{{ timeEntry.start }}</p>
         <p>{{ timeEntry.end }}</p>
+        <v-btn @click="openTimeEntriesEdit(timeEntry.id)">editer</v-btn>
+        <v-dialog width="600" v-model="dialog_edit">
+          <ModifierTimeEntries @close="closeTimeEntriesEdit" :activites="activites" :projets="projets" :entry-id="idAvantEdit"/>
+        </v-dialog>
       </div>
     </div>
 
