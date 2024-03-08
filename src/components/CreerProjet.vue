@@ -6,24 +6,24 @@ import {useAuthentificationStore} from "@/stores/authentification.js";
 export default {
   data: () => ({
     nom: '',
-    color: '#FF0000',
+    description: '',
     rules: [
       value => {
         if (value) return true
 
-        return 'Le nom de l\'activite est requis'
+        return 'Le nom du projet est requis'
       },
     ],
   }),
   computed: {
     ...mapState(useAuthentificationStore, ["key"])
   },
-  methods:{
-    createActivity() {
-      if(this.nom !== ''){
-        axios.post("https://timely.edu.netlor.fr/api/activities", {
+  methods: {
+    createProject() {
+      if (this.nom !== '') {
+        axios.post("https://timely.edu.netlor.fr/api/projects", {
           "name": this.nom,
-          "color": this.color
+          "description": this.description
         }, {
           headers: {
             'Content-Type': "application/json",
@@ -37,18 +37,22 @@ export default {
 </script>
 
 <template>
+
   <div class="container">
-    <h2>Creer Activité</h2>
+    <h2>Creer Projet</h2>
 
     <v-form @submit.prevent ref="form">
       <v-text-field
           v-model="nom"
           :rules="rules"
-          label="Nom de l'activite"
+          label="Nom du projet"
       ></v-text-field>
-      <v-color-picker color="grey" v-model="color"></v-color-picker>
+      <v-text-field
+          v-model="description"
+          label="Description du projet"
+      ></v-text-field>
       <v-container class="mt-3 pa-0">
-      <v-btn type="submit" variant="outlined" color="blue" @click="createActivity">Creer</v-btn>
+        <v-btn type="submit" variant="outlined" color="blue" @click="createProject">Creer</v-btn>
       </v-container>
     </v-form>
 
@@ -56,13 +60,12 @@ export default {
 </template>
 
 <style scoped>
-
-h2{
+h2 {
   font-size: 25px;
   margin-bottom: 20px;
 }
 
-.container{
+.container {
   margin-top: 20px;
   display: flex;
   flex-direction: column;
@@ -72,4 +75,7 @@ h2{
   width: 100%;
 }
 
+form {
+  width: 20%;
+}
 </style>

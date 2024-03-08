@@ -1,7 +1,7 @@
 <script>
-import axios from "axios";
-import {mapState} from "pinia";
 import {useAuthentificationStore} from "@/stores/authentification.js";
+import {mapState} from "pinia";
+import axios from "axios";
 
 export default {
   data: () => ({
@@ -18,10 +18,14 @@ export default {
   computed: {
     ...mapState(useAuthentificationStore, ["key"])
   },
+  mounted() {
+    this.id = this.$route.params.id;
+    this.getActivity()
+  },
   methods:{
-    createActivity() {
+    updateActivity() {
       if(this.nom !== ''){
-        axios.post("https://timely.edu.netlor.fr/api/activities", {
+        axios.put("https://timely.edu.netlor.fr/api/activities/"+this.id, {
           "name": this.nom,
           "color": this.color
         }, {
@@ -30,16 +34,27 @@ export default {
             "Authorization": `key=${this.key}`
           }
         })
+        this.$router.push({name: "parametre-generaux"})
       }
     },
+    getActivity() {
+      axios.get("https://timely.edu.netlor.fr/api/activities/"+this.id, {
+        headers: {
+          'Content-Type': "application",
+          "Authorization": `key=${this.key}`
+        }
+      }).then(res => {
+        this.nom = res.data.name
+        this.color = res.data.color
+      })
+    }
   }
 }
 </script>
 
 <template>
   <div class="container">
-    <h2>Creer Activité</h2>
-
+    <h2>Modifier Activité</h2>
     <v-form @submit.prevent ref="form">
       <v-text-field
           v-model="nom"
@@ -48,15 +63,13 @@ export default {
       ></v-text-field>
       <v-color-picker color="grey" v-model="color"></v-color-picker>
       <v-container class="mt-3 pa-0">
-      <v-btn type="submit" variant="outlined" color="blue" @click="createActivity">Creer</v-btn>
+      <v-btn type="submit" variant="outlined" color="blue" @click="updateActivity">Modifier</v-btn>
       </v-container>
     </v-form>
-
   </div>
 </template>
 
 <style scoped>
-
 h2{
   font-size: 25px;
   margin-bottom: 20px;
@@ -71,5 +84,4 @@ h2{
   height: 100%;
   width: 100%;
 }
-
 </style>

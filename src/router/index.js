@@ -48,6 +48,26 @@ const router = createRouter({
         path: '/profil',
         name: 'profil',
         component: () => import('../views/Profil.vue')
+    },
+    {
+        path: '/modif/activite/:id',
+        name: 'modifierActivite',
+        component: () => import('../components/ModiferActivite.vue')
+    },
+    {
+      path: '/modif/projet/:id',
+      name: 'modifierProjet',
+      component: () => import('../components/ModiferProjet.vue')
+    },
+    {
+      path: '/projet',
+      name: 'projet',
+      component: () => import('../views/Projects.vue')
+    },
+    {
+      path: '/parametre/generaux',
+      name: 'parametre-generaux',
+      component: () => import('../views/PrametresGeneraux.vue')
     }
   ]
 })

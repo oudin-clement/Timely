@@ -11,17 +11,47 @@ export default {
   }),
 
   computed: {
-    ...mapState(useAuthentificationStore, ["name", "id", "key", "email"])
+    ...mapState(useAuthentificationStore, ["key"])
   },
   mounted() {
-    axios.get("https://timely.edu.netlor.fr/api/activities", {
-      headers: {
-        'Content-Type': "application/json",
-        "Authorization": `key=${this.key}`
+    this.getActivities()
+  },
+  methods: {
+    getActivities() {
+      axios.get("https://timely.edu.netlor.fr/api/activities", {
+        headers: {
+          'Content-Type': "application",
+          "Authorization": `key=${this.key}`
+        }
+      }).then(res => {
+        this.tab = res.data
+      })
+    },
+    modifyActivity(id) {
+      this.$router.push({name: "modifierActivite", params: {id: id}})
+    },
+    enableDisableActivity(id,enable) {
+      if(enable === 0){
+      axios.patch("https://timely.edu.netlor.fr/api/activities/"+id+"/enable",  {},{
+        headers: {
+          'Content-Type': "application/json",
+          "Authorization": `key=${this.key}`
+        }
+      }).then(() => {
+        this.getActivities()
+      })
+      }else{
+        axios.patch("https://timely.edu.netlor.fr/api/activities/"+id+"/disable",{},  {
+          headers: {
+            'Content-Type': "application/json",
+            "Authorization": `key=${this.key}`
+          }
+        }).then(() => {
+          this.getActivities()
+        })
       }
-    }).then(res => {
-      this.tab = res.data
-    })
+
+    },
   }
 }
 </script>
@@ -34,12 +64,17 @@ export default {
         <v-col v-for="activite in tab" :key="activite.id" cols="12" md="4">
           <v-card class="ma-2" :color="activite.color">
             <v-card-title>{{ activite.name }}</v-card-title>
+            <v-card-actions>
+              <v-btn @click="enableDisableActivity(activite.id,activite.is_enabled)" v-if="activite.is_enabled === 1">Activer</v-btn>
+              <v-btn @click="enableDisableActivity(activite.id,activite.is_enabled)" v-if="activite.is_enabled === 0">Desactiver</v-btn>
+              <v-btn @click="modifyActivity(activite.id)">Modifier</v-btn>
+            </v-card-actions>
           </v-card>
         </v-col>
       </v-row>
     </v-container>
   </div>
-  <CreerActivite/>
+  <CreerActivite @click="getActivities"/>
 </template>
 
 <style scoped>
