@@ -77,7 +77,7 @@ export default {
 <template>
   <header class="w-full h-[80px] bg-purple-500 flex items-center justify-evenly">
     <div>
-      <p>Paramètre Généraux</p>
+      <router-link to="/parametre/generaux">Paramètre Généraux</router-link>
     </div>
     <div>
       <p class="cursor-pointer" @click="deconnexion">Déconnexion</p>
@@ -98,7 +98,7 @@ export default {
       <p>Activités</p>
     </div>
     <div>
-      <p>Statistiques</p>
+      <router-link to="/statistiques">Statistiques</router-link>
     </div>
 
   </header>
