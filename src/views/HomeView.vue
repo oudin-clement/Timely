@@ -3,8 +3,12 @@ import axios from "axios";
 import {mapActions, mapState} from "pinia";
 import {useAuthentificationStore} from "@/stores/authentification.js";
 import {useActiviteStore} from "@/stores/activite.js";
+import CreerActivite from "@/components/CreerActivite.vue";
+import CreerTimeEntries from "@/components/CreerTimeEntries.vue";
+import ModifierTimeEntries from "@/components/ModifierTimeEntries.vue";
 
 export default {
+  components: {CreerActivite, CreerTimeEntries, ModifierTimeEntries},
   data() {
     return {
       projets: [],
@@ -14,8 +18,13 @@ export default {
       projetSelectedName: "",
       activiteSelectedId: "",
       activiteSelectedName: "",
+      debutcreate: "",
+      fincreate: "",
       tempsEcoul: 0,
-      textNote: ""
+      textNote: "",
+      dialog_create: false,
+      dialog_edit: false,
+      idAvantEdit: ""
     }
   },
   methods: {
@@ -79,8 +88,9 @@ export default {
         }
       })
       this.finirActivite({fin: new Date().toISOString()})
+      const date = new Date().toISOString().split("T")[0]
       console.log("stop")
-      axios.get("https://timely.edu.netlor.fr/api/time-entries", {
+      axios.get(`https://timely.edu.netlor.fr/api/time-entries?from=${date}&to=${date}`, {
         headers: {
           'Content-Type': "application/json",
           'Authorization': `key=` + this.key,
@@ -96,6 +106,19 @@ export default {
       const minutes = Math.floor((secondes % 3600) / 60);
       const secondesRestantes = secondes % 60;
       return `${heures}h ${minutes}m ${secondesRestantes}s`;
+    },
+
+    closeTimeEntriesCreate(){
+      this.dialog_create = false
+    },
+
+    closeTimeEntriesEdit(){
+      this.dialog_edit = false
+    },
+
+    openTimeEntriesEdit(id){
+      this.idAvantEdit = id;
+      this.dialog_edit = true
     }
 
   },
@@ -127,7 +150,8 @@ export default {
           })
     }
 
-    axios.get("https://timely.edu.netlor.fr/api/time-entries", {
+    const date = new Date().toISOString().split("T")[0]
+    axios.get(`https://timely.edu.netlor.fr/api/time-entries?from=${date}&to=${date}`, {
       headers: {
         'Content-Type': "application/json",
         'Authorization': `key=` + this.key,
@@ -177,12 +201,20 @@ export default {
 
 
     <div>
+      <div class="mb-5 mr-5 flex justify-end"><v-btn color="blue" variant="outlined" @click="dialog_create = true">Créer une entrée</v-btn></div>
+      <v-dialog width="600" v-model="dialog_create">
+        <CreerTimeEntries :activites="activites" :projets="projets" @close="closeTimeEntriesCreate"/>
+      </v-dialog>
       <div v-for="timeEntry in timeEntries" :key="timeEntry.id"
            class="w-full justify-evenly flex p-10 bg-purple-500 rounded-3xl mb-5">
         <p class="text-xl font-bold">{{ getNameProjet(timeEntry.project_id) }}</p>
         <p class="text-xl font-bold">{{ getNameActivite(timeEntry.activity_id) }}</p>
         <p>{{ timeEntry.start }}</p>
         <p>{{ timeEntry.end }}</p>
+        <v-btn @click="openTimeEntriesEdit(timeEntry.id)">editer</v-btn>
+        <v-dialog width="600" v-model="dialog_edit">
+          <ModifierTimeEntries @close="closeTimeEntriesEdit" :activites="activites" :projets="projets" :entry-id="idAvantEdit"/>
+        </v-dialog>
       </div>
     </div>
 
