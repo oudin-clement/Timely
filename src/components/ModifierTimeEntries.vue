@@ -94,6 +94,7 @@ export default {
         item-title="name"
         item-value="id"
         label="Projet"
+        class="w-[250px]"
     ></v-select>
 
     <v-select
@@ -102,6 +103,7 @@ export default {
         v-model="activiteSelectedId"
         item-title="name"
         item-value="id"
+        class="w-[250px]"
         label="Activité"></v-select>
     <v-textarea v-model="textNote"></v-textarea>
     <input type="datetime-local" v-model="debut">
