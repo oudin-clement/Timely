@@ -3,8 +3,11 @@ import axios from "axios";
 import {mapActions, mapState} from "pinia";
 import {useAuthentificationStore} from "@/stores/authentification.js";
 import {useActiviteStore} from "@/stores/activite.js";
+import CreerActivite from "@/components/CreerActivite.vue";
+import CreerTimeEntries from "@/components/CreerTimeEntries.vue";
 
 export default {
+  components: {CreerActivite, CreerTimeEntries},
   data() {
     return {
       projets: [],
@@ -14,8 +17,11 @@ export default {
       projetSelectedName: "",
       activiteSelectedId: "",
       activiteSelectedName: "",
+      debutcreate: "",
+      fincreate: "",
       tempsEcoul: 0,
-      textNote: ""
+      textNote: "",
+      dialog_create: false
     }
   },
   methods: {
@@ -97,6 +103,10 @@ export default {
       const minutes = Math.floor((secondes % 3600) / 60);
       const secondesRestantes = secondes % 60;
       return `${heures}h ${minutes}m ${secondesRestantes}s`;
+    },
+
+    closeTimeEntriesCreate(){
+      this.dialog_create = false
     }
 
   },
@@ -179,6 +189,10 @@ export default {
 
 
     <div>
+      <div class="mb-5 mr-5 flex justify-end"><v-btn color="blue" variant="outlined" @click="dialog_create = true">Créer une entrée</v-btn></div>
+      <v-dialog width="600" v-model="dialog_create">
+        <CreerTimeEntries :activites="activites" :projets="projets" @close="closeTimeEntriesCreate"/>
+      </v-dialog>
       <div v-for="timeEntry in timeEntries" :key="timeEntry.id"
            class="w-full justify-evenly flex p-10 bg-purple-500 rounded-3xl mb-5">
         <p class="text-xl font-bold">{{ getNameProjet(timeEntry.project_id) }}</p>
