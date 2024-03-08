@@ -54,8 +54,8 @@ export default {
       this.$emit("close");
     },
 
-    deleteTimeEntry(){
-      axios.delete(`https://timely.edu.netlor.fr/api/time-entries/${this.entryId}`, {
+    async deleteTimeEntry(){
+      await axios.delete(`https://timely.edu.netlor.fr/api/time-entries/${this.entryId}`, {
         headers: {
           'Content-Type': "application/json",
           "Authorization": `key=${this.key}`
@@ -64,8 +64,8 @@ export default {
       this.$emit("close");
     },
 
-    editTimeEntry(){
-      axios.put(`https://timely.edu.netlor.fr/api/time-entries/${this.entryId}`, {
+    async editTimeEntry(){
+      await axios.put(`https://timely.edu.netlor.fr/api/time-entries/${this.entryId}`, {
         "project_id": this.projetSelectedId,
         "activity_id": this.activiteSelectedId,
         "start": this.formatDateTime(this.debut),
@@ -86,7 +86,7 @@ export default {
 
 
 <template>
-  <div class="flex flex-col justify-center items-center p-10 bg-white">
+  <div class="flex flex-col justify-center items-center p-10 bg-white rounded-2xl">
 
     <v-select
         :items="projets"

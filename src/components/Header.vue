@@ -96,7 +96,7 @@ export default {
       <p>Objectif atteint :</p>
     </div>
     <div>
-      <p>Activités</p>
+      <router-link to="/">Activités</router-link>
     </div>
     <div>
       <router-link to="/statistiques">Statistiques</router-link>

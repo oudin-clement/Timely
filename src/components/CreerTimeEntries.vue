@@ -37,8 +37,8 @@ export default {
       this.$emit("close");
     },
 
-    createTimeEntry(){
-      axios.post("https://timely.edu.netlor.fr/api/time-entries", {
+    async createTimeEntry(){
+      await axios.post("https://timely.edu.netlor.fr/api/time-entries", {
         "project_id": this.projetSelectedId,
         "activity_id": this.activiteSelectedId,
         "start": this.formatDateTime(this.debut),
@@ -59,7 +59,7 @@ export default {
 
 
 <template>
-  <div class="flex flex-col justify-center items-center p-10 bg-white">
+  <div class="flex flex-col justify-center items-center p-10 bg-white rounded-2xl">
 
     <v-select
         :items="projets"

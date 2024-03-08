@@ -6,14 +6,16 @@ import {useActiviteStore} from "@/stores/activite.js";
 import CreerActivite from "@/components/CreerActivite.vue";
 import CreerTimeEntries from "@/components/CreerTimeEntries.vue";
 import ModifierTimeEntries from "@/components/ModifierTimeEntries.vue";
+import CreerObjectif from "@/components/CreerObjectif.vue";
 
 export default {
-  components: {CreerActivite, CreerTimeEntries, ModifierTimeEntries},
+  components: {CreerActivite, CreerTimeEntries, ModifierTimeEntries, CreerObjectif},
   data() {
     return {
       projets: [],
       activites: [],
       timeEntries: [],
+      objectif: [],
       projetSelectedId: "",
       projetSelectedName: "",
       activiteSelectedId: "",
@@ -24,7 +26,8 @@ export default {
       textNote: "",
       dialog_create: false,
       dialog_edit: false,
-      idAvantEdit: ""
+      idAvantEdit: "",
+      dialog_objectif: false
     }
   },
   methods: {
@@ -74,8 +77,8 @@ export default {
         this.tempsEcoul = maintenant - tempsDebut;
       }, 1000);
     },
-    stopActivite() {
-      axios.post("https://timely.edu.netlor.fr/api/time-entries", {
+    async stopActivite() {
+      await axios.post("https://timely.edu.netlor.fr/api/time-entries", {
         "project_id": this.idProjet,
         "activity_id": this.idActivite,
         "start": this.debut,
@@ -89,8 +92,7 @@ export default {
       })
       this.finirActivite({fin: new Date().toISOString()})
       const date = new Date().toISOString().split("T")[0]
-      console.log("stop")
-      axios.get(`https://timely.edu.netlor.fr/api/time-entries?from=${date}&to=${date}`, {
+      await axios.get(`https://timely.edu.netlor.fr/api/time-entries?from=${date}&to=${date}`, {
         headers: {
           'Content-Type': "application/json",
           'Authorization': `key=` + this.key,
@@ -110,10 +112,43 @@ export default {
 
     closeTimeEntriesCreate(){
       this.dialog_create = false
+      const date = new Date().toISOString().split("T")[0]
+      axios.get(`https://timely.edu.netlor.fr/api/time-entries?from=${date}&to=${date}`, {
+        headers: {
+          'Content-Type': "application/json",
+          'Authorization': `key=` + this.key,
+        }
+      })
+          .then(res => {
+            this.timeEntries = res.data
+          })
+    },
+
+    closeObjectif(){
+      this.dialog_objectif = false
+      axios.get("https://timely.edu.netlor.fr/api/daily-objectives", {
+        headers: {
+          'Content-Type': "application/json",
+          'Authorization': `key=` + this.key,
+        }
+      })
+          .then(res => {
+            this.objectif = res.data
+          })
     },
 
     closeTimeEntriesEdit(){
       this.dialog_edit = false
+      const date = new Date().toISOString().split("T")[0]
+      axios.get(`https://timely.edu.netlor.fr/api/time-entries?from=${date}&to=${date}`, {
+        headers: {
+          'Content-Type': "application/json",
+          'Authorization': `key=` + this.key,
+        }
+      })
+          .then(res => {
+            this.timeEntries = res.data
+          })
     },
 
     openTimeEntriesEdit(id){
@@ -147,6 +182,16 @@ export default {
       })
           .then(res => {
             this.activites = res.data
+          })
+
+      axios.get("https://timely.edu.netlor.fr/api/daily-objectives", {
+        headers: {
+          'Content-Type': "application/json",
+          'Authorization': `key=` + this.key,
+        }
+      })
+          .then(res => {
+            this.objectif = res.data
           })
     }
 
@@ -217,6 +262,20 @@ export default {
         </v-dialog>
       </div>
     </div>
+
+    <div>
+      <v-btn color="blue" variant="outlined" @click="dialog_objectif = true">Créer un objectif</v-btn>
+      <v-dialog width="600" v-model="dialog_objectif">
+        <CreerObjectif @close="closeObjectif"/>
+      </v-dialog>
+    </div>
+    <div class="flex flex-wrap justify-center">
+      <div v-for="obj in objectif" :key="obj.id" class="w-[20%] rounded-2xl bg-white px-4 py-2 mx-2 my-4 text-center">
+        <p>Nom : {{obj.name}}</p>
+        <p>Contenu : {{obj.content}}</p>
+      </div>
+    </div>
+
 
 
   </main>
