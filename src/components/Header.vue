@@ -46,7 +46,8 @@ export default {
       })
       this.finirActivite({fin: new Date().toISOString()})
       console.log("stop")
-      axios.get("https://timely.edu.netlor.fr/api/time-entries", {
+      const date = new Date().toISOString().split("T")[0]
+      axios.get(`https://timely.edu.netlor.fr/api/time-entriesfrom=${date}&to=${date}`, {
         headers: {
           'Content-Type': "application/json",
           'Authorization': `key=` + this.key,
