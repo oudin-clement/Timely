@@ -50,6 +50,7 @@ export default {
 <template>
   <div class="container">
     <h1>Profil</h1>
+    <h1>Votre clé de profil est "{{key}}" (elle vous servira pour vous authentifier)</h1>
     <v-form @submit.prevent ref="form">
       <v-text-field
           v-model="name"

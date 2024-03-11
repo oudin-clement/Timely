@@ -1,5 +1,7 @@
 <script>
 import axios from "axios";
+import {mapActions} from "pinia";
+import {useAuthentificationStore} from "@/stores/authentification.js";
 
 export default {
   data() {
@@ -11,11 +13,17 @@ export default {
     }
   },
   methods: {
+    ...mapActions(useAuthentificationStore, ["fetchProfile"]),
     inscription() {
       axios.post("https://timely.edu.netlor.fr/api/apikeys", {
         "name": this.nom,
         "email": this.email
       })
+
+          .then(res => {
+            this.fetchProfile({key: res.data.key, id: res.data.id, name: res.data.name, email: res.data.email})
+            this.$router.push("/")
+          })
           .catch(e => {
             this.displayErreur = true
             this.erreur = e.response.data.errors
